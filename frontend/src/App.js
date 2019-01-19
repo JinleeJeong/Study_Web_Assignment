@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import Template from './components/Template';
 import TopAppBar from './components/TopAppBar';
-import SignUp from './components/SignUp';
+import test from './images/test.png';
+import SignUpPage from './components/SignUpPage';
 import './App.css';
 
 class App extends Component {
@@ -8,7 +10,8 @@ class App extends Component {
     return (
       <div className="App">
         <TopAppBar />
-        <SignUp />
+        <Template test={test} />
+        <SignUpPage />
       </div>
     );
   }
