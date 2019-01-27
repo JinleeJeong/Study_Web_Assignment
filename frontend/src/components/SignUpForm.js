@@ -1,12 +1,15 @@
 import React, {Component} from 'react';
-import Validation from '../methods/Validation';
-import FormChecker from '../methods/FormChecker';
 import validator from 'validator';
 import { Form, FormGroup, ControlLabel, FormControl, HelpBlock, Button } from 'react-bootstrap';
 
 class SignUpForm extends Component {
+
   constructor(props){
     super(props);
+
+    // formFieldInput : 해당 객체의 property에 사용자가 각 칸에 입력한 값들을 저장한다.
+    // formFieldValid : 각 칸에 입력된 값 (formFiledInput 객체의 properties)의 상태를 저장한다(null, error, warning etc)  
+    // formFieldMessage : 유효성 검사를 통과하지 못한 칸 아래에 나타낼 오류 메시지를 저장한다. 
     this.state = {
       formFieldInput : 
       {
@@ -31,14 +34,11 @@ class SignUpForm extends Component {
       }
   }
 
-  // This binding is necessary to make `this` work in the callback
-  // https://reactjs.org/docs/handling-events.html
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind
-  
   this.onChange = this.onChange.bind(this);
   this.onSubmit = this.onSubmit.bind(this);
 }
 
+// 회원가입 버튼을 누를 때 실행되는 함수로서 사용자 입력 값의 유효성을 검사한 후 state를 업데이트한다. 
 validateFields(){
   
   const entries = Object.entries(this.state.formFieldInput);
@@ -48,16 +48,18 @@ validateFields(){
   for (const [fieldName,value] of entries) {
     switch (fieldName){
       case 'userName' :
-          // 만족해야 하는 조건 순서대로 넘겨주기
-          
+
+          // FormChecker 객체의 3번째 parameter는 만족해야 하는 유효성 정보 객체의 list이다. 
+          // list에서 n번째 객체의 조건이 만족되어야 n+1번째 조건을 검사하게 된다.
+          // 따라서 우선하여야 할 조건 순서를 고려하여 list를 구성해야 한다는 점에 유의해야 한다.
           formChecker = new FormChecker (fieldName,value,[
               {
-                  method : Validation.isNotEmpty,
+                  method : this.isNotEmpty,
                   args : [],
                   message : '공란일 수 없습니다'
               },
               {
-                  method : Validation.strLengthCondition,
+                  method : this.strLengthCondition,
                   args : [{min : 2, max : 10}],
                   message : 2 + ' 글자 이상 ' + 10 + ' 글자 이하여야 합니다' 
               }
@@ -67,7 +69,7 @@ validateFields(){
       case 'email' :
           formChecker = new FormChecker (fieldName,value,[
               {
-                  method : Validation.isNotEmpty,
+                  method : this.isNotEmpty,
                   args : [],
                   message : '공란일 수 없습니다'
               },
@@ -82,33 +84,32 @@ validateFields(){
       case 'password' :
           formChecker = new FormChecker (fieldName,value,[
               {
-                  method : Validation.isNotEmpty,
+                  method : this.isNotEmpty,
                   args : [],
                   message : '공란일 수 없습니다'
               },
               {
-                  method : Validation.passwordStrengthCondition,
+                  method : this.passwordStrengthCondition,
                   args : [],
                   message : '특수문자 포함 최소 8자 ~ 최대 20자 이내로 입력합니다.'
               }
           ]);
-          //console.log('password');
       break;
 
       case 'passwordConfirmation' :
+
           formChecker = new FormChecker (fieldName,value,[
               {
-                  method : Validation.isNotEmpty,
+                  method : this.isNotEmpty,
                   args : [],
                   message : '공란일 수 없습니다'
               },
               {
-                  method : Validation.sameAsPassword,
+                  method : this.sameAsPassword,
                   args : [{confirmationStr : this.state.formFieldInput.password}],
                   message : '비밀번호가 일치하지 않습니다'
               }
           ]);
-          //console.log('passwordConfirmation');
         break;
         default :
         break;
@@ -119,18 +120,6 @@ validateFields(){
       newFormFieldMessage[validationResult['fieldName'] + 'ValError'] = validationResult['message'];
   }
 
-  console.log(newFormFieldValid)
-  /*
-  this.setState(prevState =>({
-      formFieldValid : {
-          ...prevState.formFieldValid,
-          [validationResult['fieldName']+'Valid'] : validationResult['isCorrect'] 
-      },
-      formFieldMessage : {
-          ...prevState.formFieldMessage,
-          [validationResult['fieldName']+'ValError'] : validationResult['message']
-      } 
-  }));*/
   this.setState(prevState =>({
       ...prevState,
       formFieldValid :  newFormFieldValid,
@@ -141,9 +130,7 @@ validateFields(){
 onChange(e){
   const name = e.target.name;
   const value = e.target.value;
-  // Computed property name 
-  // callback에 e.target.~ 하면 왜 에러가 나는 것일까 ? 
-  //this.setState({ [name] : value});
+
   this.setState(prevState =>({
       formFieldInput:{
           ...prevState.formFieldInput,
@@ -157,6 +144,29 @@ onSubmit(e){
   e.preventDefault();
   this.validateFields();
 }
+
+strLengthCondition (inpStr,args){
+
+  if (inpStr.length < args[0]['min'] || inpStr.length > args[0]['max']){
+      return false;
+  }
+  return true;
+}
+
+isNotEmpty (inpStr){
+  return !validator.isEmpty(inpStr);
+}
+
+// 8글자 이상 20글자 이하 and 특수문자 최소 1개 포함 여부를 검사한다. 
+passwordStrengthCondition (inpStr){
+  return new RegExp('^(?=.*?[#?!@$%^&*-]).{8,20}$').test(inpStr);
+}
+
+// 1차 비밀번호와 2차 비밀번호가 같은지 여부를 검사한다.
+sameAsPassword (passwordStr,args){
+  return passwordStr == args[0]['confirmationStr'];
+}
+
 
 render (){
   return (
@@ -226,3 +236,44 @@ render (){
 }
 
 export default SignUpForm
+
+// form에 입력된 값의 유효성 검사를 수행하는 helper class
+class FormChecker {
+  // 객체 생성시 필드명, 필드값, 유효성 조건을 저장한다. 
+  constructor (fieldName,value,validationInfo){
+      this.fieldName = fieldName;
+      this.value = value;
+      this.validationInfo = validationInfo;
+  }
+
+  // 특정 필드가 주어진 복수의 유효성 조건을 만족하는지 판단한다.
+  // 판단 후 validResult 객체로 검사 결과를 반환한다.
+  validate () {
+
+      let validResult = {
+          fieldName : this.fieldName,
+          isCorrect : null,
+          message : ''
+      }
+
+      if (this.validationInfo.length == 0)
+          return validResult;
+
+      for (var rule of this.validationInfo){
+
+          if (!rule['method'](this.value,rule['args'])){
+              
+              validResult = {
+                  fieldName : this.fieldName,
+                  isCorrect : 'error',
+                  message : rule['message']
+              };
+
+              return validResult;
+          }
+      }
+      
+      return validResult;
+
+  }
+}
