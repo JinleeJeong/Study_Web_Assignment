@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import './Template.css';
 import { ButtonToolbar, Button, Row, Col, Image } from 'react-bootstrap';
+import test from '../images/test.png';
 
 class Template extends Component {
   render() {
@@ -35,22 +36,22 @@ class Template extends Component {
                 <div className="info_photo"> 
                   <Row className="show-grid">
                     <Col xs={12} sm={8} md={4}>
-                      <Image src={this.props.test} />
+                      <Image src={test} />
                     </Col>
-                    <Col xshidden sm={8} md={4}>
-                      <Image src={this.props.test} />
+                    <Col sm={8} md={4}>
+                      <Image src={test} />
                     </Col>
-                    <Col  xshidden smHidden md={4}>
-                      <Image src={this.props.test} />
-                    </Col>
-                    <Col xs={8} md={4}>
-                      <Image src={this.props.test} />
+                    <Col smHidden md={4}>
+                      <Image src={test} />
                     </Col>
                     <Col xs={8} md={4}>
-                      <Image src={this.props.test} />
+                      <Image src={test} />
                     </Col>
-                    <Col xshidden md={4}>
-                      <Image src={this.props.test} />
+                    <Col xs={8} md={4}>
+                      <Image src={test} />
+                    </Col>
+                    <Col md={4}>
+                      <Image src={test} />
                     </Col>
                   </Row>
                 </div>                        

@@ -4,16 +4,3 @@
   border: 0;
   background-color: white;
 }
-.modal-dialog {
-  text-align: center;
-}
-.modal-content {
-  text-align: center;
-  display: inline-block;
-  width: 500px;
-  height: 500px;
-  margin-right: 0;
-}
-.modal-body {
-  text-align: center;
-}

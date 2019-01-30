@@ -1,65 +1,203 @@
-import React, { Component } from 'react';
-import { Form, Button, Card } from 'react-bootstrap';
+import React, {Component} from 'react';
+import Validation from '../methods/Validation';
+import FormChecker from '../methods/FormChecker';
+import validator from 'validator';
+import { Form, FormGroup, ControlLabel, FormControl, HelpBlock, Button } from 'react-bootstrap';
+import axios from 'axios';
+import { Redirect } from 'react-router-dom'
+import './SignIn.css';
 
-class SignIn extends Component {
-  constructor() {
-    super();
-    this.handleEmailChange = this.handleEmailChange.bind(this);
-    this.handlePassWordChange = this.handlePassWordChange.bind(this);
-
+class SignUpForm extends Component {
+  constructor(props){
+    super(props);
     this.state = {
-      email: '',
-      password: '',
-    }
+      formFieldInput : 
+      {
+        email: '',
+        password:'',
+        passwordConfirmation : ''
+      },
+      formFieldValid :
+      {
+        emailValid : null,
+        passwordValid : null,
+        passwordConfirmationValid : null,
+      },
+      formFieldMessage :
+      {
+        emailValError : '',
+        passwordValError : '',
+        passwordConfirmationValError : ''
+      },
+  }
+  
+  this.onChange = this.onChange.bind(this);
+  this.onSubmit = this.onSubmit.bind(this);
+}
+
+validateFields(){
+  
+  const entries = Object.entries(this.state.formFieldInput);
+  let formChecker,validationResult;
+  let newFormFieldValid = {},newFormFieldMessage = {};
+
+  for (const [fieldName,value] of entries) {
+    switch (fieldName){
+
+      case 'email' :
+          formChecker = new FormChecker (fieldName,value,[
+              {
+                  method : Validation.isNotEmpty,
+                  args : [],
+                  message : '공란일 수 없습니다'
+              },
+              {
+                  method : validator.isEmail,
+                  args : [],
+                  message : '올바른 이메일 형식이 아닙니다'
+              }
+          ]);
+      break
+
+      case 'password' :
+          formChecker = new FormChecker (fieldName,value,[
+              {
+                  method : Validation.isNotEmpty,
+                  args : [],
+                  message : '공란일 수 없습니다'
+              },
+              {
+                  method : Validation.passwordStrengthCondition,
+                  args : [],
+                  message : '특수문자 포함 최소 8자 ~ 최대 20자 이내로 입력합니다.'
+              }
+          ]);
+          //console.log('password');
+      break;
+
+      case 'passwordConfirmation' :
+          formChecker = new FormChecker (fieldName,value,[
+              {
+                  method : Validation.isNotEmpty,
+                  args : [],
+                  message : '공란일 수 없습니다'
+              },
+              {
+                  method : Validation.sameAsPassword,
+                  args : [{confirmationStr : this.state.formFieldInput.password}],
+                  message : '비밀번호가 일치하지 않습니다'
+              }
+          ]);
+          //console.log('passwordConfirmation');
+        break;
+        default :
+        break;
+      }
+      
+      validationResult = formChecker.validate();
+      newFormFieldValid[validationResult['fieldName'] + 'Valid'] = validationResult['isCorrect'];
+      newFormFieldMessage[validationResult['fieldName'] + 'ValError'] = validationResult['message'];
   }
 
-  handleEmailChange(e) {
-    this.setState({
-      email: e.target.value,
-    });
-  }
+  console.log(newFormFieldValid)
+  /*
+  this.setState(prevState =>({
+      formFieldValid : {
+          ...prevState.formFieldValid,
+          [validationResult['fieldName']+'Valid'] : validationResult['isCorrect'] 
+      },
+      formFieldMessage : {
+          ...prevState.formFieldMessage,
+          [validationResult['fieldName']+'ValError'] : validationResult['message']
+      } 
+  }));*/
+  this.setState(prevState =>({
+      ...prevState,
+      formFieldValid :  newFormFieldValid,
+      formFieldMessage : newFormFieldMessage
+  }));
+}
 
-  handlePassWordChange(e) {
-    this.setState({
-      password: e.target.value,
-    });
-  }
+onChange(e){
+  const name = e.target.name;
+  const value = e.target.value;
+  // Computed property name 
+  // callback에 e.target.~ 하면 왜 에러가 나는 것일까 ? 
+  //this.setState({ [name] : value});
+  this.setState(prevState =>({
+      formFieldInput:{
+          ...prevState.formFieldInput,
+          [name] : value
+      }
+  }));
+}
 
-  render() {
-    return (
-      <>
-        <Card className="align-self-center m-auto" style={{ width: '30rem', height: '30rem' }}>
-          <Card.Body>
-            <Form>
-              <Form.Group controlId="formBasicEmail">
-                <Form.Label>이메일 주소</Form.Label>
-                <Form.Control type="email" placeholder="이메일 입력" value={this.state.email} onChange={this.handleEmailChange} />
-              </Form.Group>
+onSubmit(e){
+  //you cannot return false to prevent default behavior in React. You must call preventDefault explicitly. 
+  e.preventDefault();
+  this.validateFields();
+  const { email, password, passwordConfirmation } = this.state.formFieldInput;
 
-              <Form.Group controlId="formBasicPassword">
-                <Form.Label>비밀번호</Form.Label>
-                <Form.Control type="password" placeholder="비밀번호 입력" value={this.state.password} onChange={this.handlePassWordChange}
-              />
-              </Form.Group>
-              <Button variant="primary" type="submit">
-                회원가입
-              </Button>
-              <br/>
-              <Button className="mt-5" variant="primary" type="submit">
-                페이스북 계정으로 로그인
-              </Button>
-              <br/>
-              <Button className="mt-5" variant="primary" type="submit">
-                구글 계정으로 로그인
-              </Button>
-            </Form>
-            <div>{this.state.email}</div>
-            <div>{this.state.password}</div>
-          </Card.Body>
-        </Card>
-      </>
+  axios.post('http://localhost:8080/api/user', { email, password, passwordConfirmation })
+  .then((result) => {
+    return <Redirect to='/signin'  />
+  })
+  .catch((err) => { console.log(err) });
+}
+
+render (){
+  return (
+    <div className="row">
+      <div className="col-md-4 col-md-offset-4">
+        <Form onSubmit = {this.onSubmit}>
+          <h1 className = "FormHeader">로그인</h1>
+            <FormGroup
+              validationState = {this.state.formFieldValid.emailValid}
+            >
+            <ControlLabel>이메일 주소</ControlLabel>
+            <FormControl
+              value = {this.state.formFieldInput.email}
+              onChange={this.onChange}
+              type = "text"
+              name="email">
+            </FormControl>
+            <FormControl.Feedback/>
+              <HelpBlock>{this.state.formFieldMessage.emailValError}</HelpBlock>
+          </FormGroup>
+          <FormGroup
+            validationState = {this.state.formFieldValid.passwordValid}
+          >
+          <ControlLabel>비밀번호</ControlLabel>
+          <FormControl
+            value = {this.state.formFieldInput.password}
+            onChange={this.onChange}
+            type = "password"
+            name="password">
+          </FormControl>
+          <FormControl.Feedback/>
+            <HelpBlock>{this.state.formFieldMessage.passwordValError}</HelpBlock>
+          </FormGroup>
+          <FormGroup validationState = {this.state.formFieldValid.passwordConfirmationValid}>
+            <ControlLabel>비밀번호 확인</ControlLabel>
+            <FormControl
+              value = {this.state.formFieldInput.passwordConfirmation}
+              onChange={this.onChange}
+              type = "password"
+              name="passwordConfirmation">
+            </FormControl>
+            <FormControl.Feedback/>
+            <HelpBlock>{this.state.formFieldMessage.passwordConfirmationValError}</HelpBlock>
+          </FormGroup>
+          <FormGroup>
+            <Button bsStyle="primary" block type = "submit">
+              확인
+            </Button>
+          </FormGroup>
+        </Form>
+      </div>
+    </div>
     );
   }
 }
 
-export default SignIn;
+export default SignUpForm

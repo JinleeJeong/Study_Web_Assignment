@@ -1,4 +1,3 @@
-import React from 'react';
 import validator from 'validator';
 
 class Validation {
@@ -21,8 +20,8 @@ class Validation {
     }
 
     static sameAsPassword (passwordStr,args){
-        return passwordStr == args[0]['confirmationStr'];
+        return passwordStr === args[0]['confirmationStr'];
     }
 
 }
-export default Validation
+export default Validation;

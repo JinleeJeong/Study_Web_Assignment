@@ -30,10 +30,6 @@ class SignUpForm extends Component {
         passwordConfirmationValError : ''
       }
   }
-
-  // This binding is necessary to make `this` work in the callback
-  // https://reactjs.org/docs/handling-events.html
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind
   
   this.onChange = this.onChange.bind(this);
   this.onSubmit = this.onSubmit.bind(this);
