@@ -1,0 +1,132 @@
+.background{
+  height:500px; 
+}
+.background_video video{
+  height: 45vh;
+  width: 100%;
+  
+}
+.background_text{ 
+  color:rgb(248, 248, 248);
+  font-size: 3vh;
+  margin-right: 10%;
+  margin-top : -5%;
+  height: auto;
+  font-weight: 800;
+}
+.background_li {
+  position: absolute;
+  top: 10%;
+  list-style: none; 
+  margin-left : 25%;
+  color: rgb(107, 98, 98);
+  font-weight: 700;
+  width:300px;
+}
+.background_li a {
+  text-decoration: none; color: white;
+}
+.background Button { 
+  font-size:15px;
+}
+.background_search{
+  background-color: rgb(4, 5, 39);
+  height: 70px;
+  display:block;
+  margin: 0 20%;
+  position: absolute;
+  top: 45%;
+  width: 60%;
+}
+.background_search input {
+  font-size: 1.5rem;
+  min-height: 45px;
+  font-weight:400;
+  display:inline-block;
+  margin-left: 2%;
+  margin-top: 1%;
+  
+  width:30%;
+  height:40px;
+}
+.background_search_text {
+  
+  height : 100%;
+  width: auto;
+}
+.background_search_text span {
+  position: relative;
+  right: 38px;
+  font-size: 20px;
+  display:inline-block;
+  top:5px;
+  
+}
+._container{
+  
+  display : block;
+  margin-left:0px;
+  margin-right: 0px;
+  width:100%;
+}
+.background_search_text_middle{
+  position:relative;
+  display:inline-block;
+  color: white;
+  font-weight: 400;
+  margin-top : 25px;
+}
+.background_search_right{
+  float:right;
+  
+}
+
+.container:after {
+  content: '';
+  display:block;
+  clear:both;
+  height:0;
+  visibility: hidden;
+}
+
+
+.info{
+  margin : 0% 20% 0% 20%;
+  max-width: 100%;
+  text-align: center;
+}
+.info_search{
+  height:auto;
+  width:100%;
+  text-align: right;
+}
+
+
+.info_photo{
+  max-width:100%;
+  height:auto;
+  list-style: none;
+}
+
+@media screen and (min-width:320px) and (max-width:667px){
+  .info_photo{
+      width:100%;
+  }
+  
+  .background_search_text input {
+    width:80%;
+    margin : 5% 0% 0% 10%;
+  }
+  
+  .background_li {
+    top: 20%;
+    margin-left: 0%;
+    font-weight: 500;
+  }
+  .background_text {
+   left:0%;
+  }
+  .video{
+    height:300px;
+  }
+}
