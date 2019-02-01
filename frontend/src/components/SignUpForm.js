@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import validator from 'validator';
+import axios from 'axios';
 import { Form, FormGroup, ControlLabel, FormControl, HelpBlock, Button } from 'react-bootstrap';
 
 class SignUpForm extends Component {
@@ -10,13 +11,14 @@ class SignUpForm extends Component {
     // formFieldInput : 해당 객체의 property에 사용자가 각 칸에 입력한 값들을 저장한다.
     // formFieldValid : 각 칸에 입력된 값 (formFiledInput 객체의 properties)의 상태를 저장한다(null, error, warning etc)  
     // formFieldMessage : 유효성 검사를 통과하지 못한 칸 아래에 나타낼 오류 메시지를 저장한다. 
+
     this.state = {
       formFieldInput : 
       {
-        userName : '',
-        email: '',
-        password:'',
-        passwordConfirmation : ''
+        userName : 'test',
+        email: 'waefwe@casdc.asdc',
+        password:'asdqwe123!',
+        passwordConfirmation : 'asdqwe123!'
       },
       formFieldValid :
       {
@@ -38,9 +40,18 @@ class SignUpForm extends Component {
   this.onSubmit = this.onSubmit.bind(this);
 }
 
+registrationApiCall (){
+  axios.post('/api/users/register',{
+    email: this.state.formFieldInput.email,
+    password: this.state.formFieldInput.password,
+    name: this.state.formFieldInput.userName,
+  })
+  .then(res=> console.log(res))
+  .catch(err=>console.log(err));
+}
+
 // 회원가입 버튼을 누를 때 실행되는 함수로서 사용자 입력 값의 유효성을 검사한 후 state를 업데이트한다. 
-validateFields(){
-  
+validateFieldsAndApicall(){
   const entries = Object.entries(this.state.formFieldInput);
   let formChecker,validationResult;
   let newFormFieldValid = {},newFormFieldMessage = {};
@@ -48,7 +59,6 @@ validateFields(){
   for (const [fieldName,value] of entries) {
     switch (fieldName){
       case 'userName' :
-
           // FormChecker 객체의 3번째 parameter는 만족해야 하는 유효성 정보 객체의 list이다. 
           // list에서 n번째 객체의 조건이 만족되어야 n+1번째 조건을 검사하게 된다.
           // 따라서 우선하여야 할 조건 순서를 고려하여 list를 구성해야 한다는 점에 유의해야 한다.
@@ -120,11 +130,27 @@ validateFields(){
       newFormFieldMessage[validationResult['fieldName'] + 'ValError'] = validationResult['message'];
   }
 
-  this.setState(prevState =>({
+  this.setState (
+    prevState => ({
       ...prevState,
       formFieldValid :  newFormFieldValid,
       formFieldMessage : newFormFieldMessage
-  }));
+    }),
+    () => {
+
+     const {emailValid,userNameValid,passwordValid,passwordConfirmationValid} = this.state.formFieldValid;
+
+      if (emailValid === null && 
+          userNameValid === null && 
+          passwordValid === null &&
+          passwordConfirmationValid === null) {
+        
+            this.registrationApiCall();
+      }
+      else
+        console.log('Submit conditions are not satisfied..');
+    }
+  );
 }
 
 onChange(e){
@@ -142,7 +168,8 @@ onChange(e){
 onSubmit(e){
   //you cannot return false to prevent default behavior in React. You must call preventDefault explicitly. 
   e.preventDefault();
-  this.validateFields();
+  this.validateFieldsAndApicall();
+
 }
 
 strLengthCondition (inpStr,args){

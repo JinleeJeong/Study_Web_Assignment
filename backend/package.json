@@ -4,17 +4,25 @@
   "description": "",
   "main": "./app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "client-install": "npm install --prefix ../frontend",
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix ../frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "babel-core": "^6.26.3",
     "babel-preset-es2015": "^6.24.1",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
+    "concurrently": "^4.1.0",
     "express": "^4.16.4",
     "mongoose": "^5.4.4",
+    "nodemailer": "^5.1.1",
     "nodemon": "^1.18.9",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "randomstring": "^1.1.5"
   }
 }
