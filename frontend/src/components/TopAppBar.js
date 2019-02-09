@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import './TopAppBar.css';
 import logo from '../images/logo.png';
-import { Navbar, NavItem, Nav, Popover, Tooltip, Modal, Button, FormGroup, ControlLabel, FormControl, HelpBlock , FieldGroup } from 'react-bootstrap';
+import {Navbar, NavItem, Nav, Popover, Tooltip, Modal, Button, FormGroup, ControlLabel, FormControl, HelpBlock , FieldGroup } from 'react-bootstrap';
+import {NavLink} from 'react-router-dom';
+import { inherits } from 'util';
 
 class TopAppBar extends Component {
   constructor(props, context) {
@@ -52,16 +54,21 @@ class TopAppBar extends Component {
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav pullRight>
-            <NavItem eventKey={1} href="#">
-              새 그룹 시작하기
+            <NavItem>
+              <NavLink to = "/" style = {{color : '#777' ,textDecoration : 'none'}} eventKey={1}>
+               새 그룹 시작하기
+              </NavLink>
             </NavItem>
-            <NavItem eventKey={1} href="#" onClick={this.handleShow}>
-              로그인
+            <NavItem>
+              <NavLink to = "/signin" style = {{color : '#777' ,textDecoration : 'none'}} eventKey={2}>
+                로그인
+              </NavLink>
             </NavItem>
-            <NavItem eventKey={2} href="#">
-              회원가입
+            <NavItem>
+              <NavLink to = "signup" style = {{color : '#777' ,textDecoration : 'none'}} eventKey={2}>
+                회원가입
+              </NavLink>
             </NavItem>
-      
             <Modal show={this.state.show} onHide={this.handleClose}>
               <Modal.Header closeButton>
                 <Modal.Title>로그인</Modal.Title>

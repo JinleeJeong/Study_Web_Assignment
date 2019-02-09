@@ -6,7 +6,7 @@ const UserSchema = new Schema({
   email: {
     type: String,
     required: true,
-    //unique: true
+    unique: true
   },
   password: {
     type: String,
@@ -37,15 +37,31 @@ const UserSchema = new Schema({
   date :{
     type: Date,
     default: Date.now
+  },
+  verified: {
+    type: Boolean,
+    default: false
   }
 });
 
-module.exports = User = mongoose.model('users',UserSchema);
+let User = module.exports = mongoose.model('users',UserSchema);
 
-module.exports.hashPassword = async (password) => {
-  bcrypt.genSalt(10, function(err, salt) {
-    bcrypt.hash(password, salt, function(err, hash) {
-      return hash;     
-    });
-});
+module.exports.hashPassword = (password) => {
+
+  let salt = bcrypt.genSaltSync(10);
+  let hash = bcrypt.hashSync(password,salt);
+  return hash;
+}
+
+module.exports.checkExistingUser = (user) =>{
+  
+  return  User.findOne({email : user.email})
+    .then((err,user) => {
+      if (err)
+        return new Error('계정 중복 검사 실패');
+      if (!user) // 이미 가입하지 않은 경우
+        return false;
+      else // 가입한 경우
+        return true;
+    });  
 }

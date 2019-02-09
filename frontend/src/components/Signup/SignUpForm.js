@@ -46,111 +46,116 @@ registrationApiCall (){
     password: this.state.formFieldInput.password,
     name: this.state.formFieldInput.userName,
   })
-  .then(res=> console.log(res))
-  .catch(err=>console.log(err));
+  .then(res => {
+    if (res.data.message == "email 인증이 필요합니다.")
+      console.log("성공");
+    else if(res.data.message == "중복된 아이디입니다.")
+      this.setValidationResult({
+        fieldName: 'email',
+        isCorrect: 'error',
+        message: "이미 존재하는 아이디입니다."
+      });
+  })
+  .catch(err=> console.log(err));
 }
 
-// 회원가입 버튼을 누를 때 실행되는 함수로서 사용자 입력 값의 유효성을 검사한 후 state를 업데이트한다. 
-validateFieldsAndApicall(){
-  const entries = Object.entries(this.state.formFieldInput);
-  let formChecker,validationResult;
-  let newFormFieldValid = {},newFormFieldMessage = {};
+setValidationResult (validationResult){
+  
+  let {formFieldValid, formFieldMessage} = this.state;
 
-  for (const [fieldName,value] of entries) {
-    switch (fieldName){
-      case 'userName' :
-          // FormChecker 객체의 3번째 parameter는 만족해야 하는 유효성 정보 객체의 list이다. 
-          // list에서 n번째 객체의 조건이 만족되어야 n+1번째 조건을 검사하게 된다.
-          // 따라서 우선하여야 할 조건 순서를 고려하여 list를 구성해야 한다는 점에 유의해야 한다.
-          formChecker = new FormChecker (fieldName,value,[
-              {
-                  method : this.isNotEmpty,
-                  args : [],
-                  message : '공란일 수 없습니다'
-              },
-              {
-                  method : this.strLengthCondition,
-                  args : [{min : 2, max : 10}],
-                  message : 2 + ' 글자 이상 ' + 10 + ' 글자 이하여야 합니다' 
-              }
-      ]);
-      break;
-
-      case 'email' :
-          formChecker = new FormChecker (fieldName,value,[
-              {
-                  method : this.isNotEmpty,
-                  args : [],
-                  message : '공란일 수 없습니다'
-              },
-              {
-                  method : validator.isEmail,
-                  args : [],
-                  message : '올바른 이메일 형식이 아닙니다'
-              }
-          ]);
-      break
-
-      case 'password' :
-          formChecker = new FormChecker (fieldName,value,[
-              {
-                  method : this.isNotEmpty,
-                  args : [],
-                  message : '공란일 수 없습니다'
-              },
-              {
-                  method : this.passwordStrengthCondition,
-                  args : [],
-                  message : '특수문자 포함 최소 8자 ~ 최대 20자 이내로 입력합니다.'
-              }
-          ]);
-      break;
-
-      case 'passwordConfirmation' :
-
-          formChecker = new FormChecker (fieldName,value,[
-              {
-                  method : this.isNotEmpty,
-                  args : [],
-                  message : '공란일 수 없습니다'
-              },
-              {
-                  method : this.sameAsPassword,
-                  args : [{confirmationStr : this.state.formFieldInput.password}],
-                  message : '비밀번호가 일치하지 않습니다'
-              }
-          ]);
-        break;
-        default :
-        break;
-      }
-      
-      validationResult = formChecker.validate();
-      newFormFieldValid[validationResult['fieldName'] + 'Valid'] = validationResult['isCorrect'];
-      newFormFieldMessage[validationResult['fieldName'] + 'ValError'] = validationResult['message'];
-  }
-
+  formFieldValid[validationResult['fieldName'] + 'Valid'] = validationResult['isCorrect'];
+  formFieldMessage[validationResult['fieldName'] + 'ValError'] = validationResult['message'];
+  
   this.setState (
     prevState => ({
       ...prevState,
-      formFieldValid :  newFormFieldValid,
-      formFieldMessage : newFormFieldMessage
-    }),
-    () => {
+      formFieldValid :  formFieldValid,
+      formFieldMessage : formFieldMessage
+    }));
+}
 
-     const {emailValid,userNameValid,passwordValid,passwordConfirmationValid} = this.state.formFieldValid;
+// 회원가입 버튼을 누를 때 실행되는 함수로서 사용자 입력 값의 유효성을 검사한 후 state를 업데이트한다. 
+validateChangedField(fieldName,value){
+  
+  let formChecker,validationResult;
 
-      if (emailValid === null && 
-          userNameValid === null && 
-          passwordValid === null &&
-          passwordConfirmationValid === null) {
-        
-            this.registrationApiCall();
+  switch (fieldName){
+    case 'userName' :
+      // FormChecker 객체의 3번째 parameter는 만족해야 하는 유효성 정보 객체의 list이다. 
+      // list에서 n번째 객체의 조건이 만족되어야 n+1번째 조건을 검사하게 된다.
+      // 따라서 우선하여야 할 조건 순서를 고려하여 list를 구성해야 한다는 점에 유의해야 한다.
+      formChecker = new FormChecker (fieldName,value,[
+          {
+              method : this.isNotEmpty,
+              args : [],
+              message : '공란일 수 없습니다'
+          },
+          {
+            method : this.letterCondition,
+            args : ['hangul','alphabet','number'],
+            message : '한글, 알파벳, 숫자만 입력 가능합니다.'
+          },
+          {
+              method : this.strLengthCondition,
+              args : [{min : 2, max : 10}],
+              message : 2 + ' 글자 이상 ' + 10 + ' 글자 이하여야 합니다' 
+          }
+      ]);
+      break;
+
+    case 'email' :
+      formChecker = new FormChecker (fieldName,value,[
+        {
+            method : this.isNotEmpty,
+            args : [],
+            message : '공란일 수 없습니다'
+        },
+        {
+            method : validator.isEmail,
+            args : [],
+            message : '올바른 이메일 형식이 아닙니다'
+        }
+      ]);
+      break
+
+  case 'password' :
+    formChecker = new FormChecker (fieldName,value,[
+      {
+          method : this.isNotEmpty,
+          args : [],
+          message : '공란일 수 없습니다'
+      },
+      {
+          method : this.passwordStrengthCondition,
+          args : [],
+          message : '특수문자 포함 최소 8자 ~ 최대 20자 이내로 입력합니다.'
       }
-      else
-        console.log('Submit conditions are not satisfied..');
-    }
-  );
+    ]);
+    break;
+
+  case 'passwordConfirmation' :
+
+    formChecker = new FormChecker (fieldName,value,[
+      {
+          method : this.isNotEmpty,
+          args : [],
+          message : '공란일 수 없습니다'
+      },
+      {
+          method : this.sameAsPassword,
+          args : [{confirmationStr : this.state.formFieldInput.password}],
+          message : '비밀번호가 일치하지 않습니다'
+      }
+    ]);
+    break;
+
+  default :
+    break;
+
+  }
+      
+  validationResult = formChecker.validate();  
+  this.setValidationResult(validationResult);
 }
 
 onChange(e){
@@ -162,18 +167,27 @@ onChange(e){
           ...prevState.formFieldInput,
           [name] : value
       }
-  }));
+  }), () => this.validateChangedField (name,value) );
 }
 
 onSubmit(e){
   //you cannot return false to prevent default behavior in React. You must call preventDefault explicitly. 
   e.preventDefault();
-  this.validateFieldsAndApicall();
 
+  const {emailValid,userNameValid,passwordValid,passwordConfirmationValid} = this.state.formFieldValid;
+
+  if (emailValid === null && 
+      userNameValid === null && 
+      passwordValid === null &&
+      passwordConfirmationValid === null) {
+    
+        this.registrationApiCall();
+  }
+  else
+    console.log('Submit conditions are not satisfied..');
 }
 
 strLengthCondition (inpStr,args){
-
   if (inpStr.length < args[0]['min'] || inpStr.length > args[0]['max']){
       return false;
   }
@@ -194,6 +208,24 @@ sameAsPassword (passwordStr,args){
   return passwordStr == args[0]['confirmationStr'];
 }
 
+// 조건에 맞는 글자만 허용하는지 여부를 검사한다.
+letterCondition(inpStr,conditions){
+  
+  const matchingCharacters = {
+    'hangul': '가-힣',
+    'alphabet': 'A-Za-z',
+    'number': '0-9'
+  }
+
+  let regex = '^[';
+
+  conditions.forEach(type => {
+    regex += matchingCharacters[type];
+  });
+  regex += ']+$';
+
+  return new RegExp(regex).test(inpStr);
+}
 
 render (){
   return (
@@ -301,6 +333,5 @@ class FormChecker {
       }
       
       return validResult;
-
   }
 }
