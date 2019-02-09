@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Validation from '../methods/Validation';
 import FormChecker from '../methods/FormChecker';
 import validator from 'validator';
@@ -15,19 +15,16 @@ class SignUpForm extends Component {
       {
         email: '',
         password:'',
-        passwordConfirmation : ''
       },
       formFieldValid :
       {
         emailValid : null,
         passwordValid : null,
-        passwordConfirmationValid : null,
       },
       formFieldMessage :
       {
         emailValError : '',
         passwordValError : '',
-        passwordConfirmationValError : ''
       },
   }
   
@@ -74,24 +71,8 @@ validateFields(){
           ]);
           //console.log('password');
       break;
-
-      case 'passwordConfirmation' :
-          formChecker = new FormChecker (fieldName,value,[
-              {
-                  method : Validation.isNotEmpty,
-                  args : [],
-                  message : '공란일 수 없습니다'
-              },
-              {
-                  method : Validation.sameAsPassword,
-                  args : [{confirmationStr : this.state.formFieldInput.password}],
-                  message : '비밀번호가 일치하지 않습니다'
-              }
-          ]);
-          //console.log('passwordConfirmation');
-        break;
-        default :
-        break;
+      default :
+      break;
       }
       
       validationResult = formChecker.validate();
@@ -100,17 +81,6 @@ validateFields(){
   }
 
   console.log(newFormFieldValid)
-  /*
-  this.setState(prevState =>({
-      formFieldValid : {
-          ...prevState.formFieldValid,
-          [validationResult['fieldName']+'Valid'] : validationResult['isCorrect'] 
-      },
-      formFieldMessage : {
-          ...prevState.formFieldMessage,
-          [validationResult['fieldName']+'ValError'] : validationResult['message']
-      } 
-  }));*/
   this.setState(prevState =>({
       ...prevState,
       formFieldValid :  newFormFieldValid,
@@ -136,9 +106,9 @@ onSubmit(e){
   //you cannot return false to prevent default behavior in React. You must call preventDefault explicitly. 
   e.preventDefault();
   this.validateFields();
-  const { email, password, passwordConfirmation } = this.state.formFieldInput;
+  const { email, password } = this.state.formFieldInput;
 
-  axios.post('http://localhost:8080/api/user', { email, password, passwordConfirmation })
+  axios.post('http://localhost:8080/api/user/login', { email, password })
   .then((result) => {
     return <Redirect to='/signin'  />
   })
@@ -176,17 +146,6 @@ render (){
           </FormControl>
           <FormControl.Feedback/>
             <HelpBlock>{this.state.formFieldMessage.passwordValError}</HelpBlock>
-          </FormGroup>
-          <FormGroup validationState = {this.state.formFieldValid.passwordConfirmationValid}>
-            <ControlLabel>비밀번호 확인</ControlLabel>
-            <FormControl
-              value = {this.state.formFieldInput.passwordConfirmation}
-              onChange={this.onChange}
-              type = "password"
-              name="passwordConfirmation">
-            </FormControl>
-            <FormControl.Feedback/>
-            <HelpBlock>{this.state.formFieldMessage.passwordConfirmationValError}</HelpBlock>
           </FormGroup>
           <FormGroup>
             <Button bsStyle="primary" block type = "submit">

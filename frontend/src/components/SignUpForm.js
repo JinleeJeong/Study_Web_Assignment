@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import Validation from '../methods/Validation';
 import FormChecker from '../methods/FormChecker';
 import validator from 'validator';
+import axios from 'axios';
+import { Redirect } from 'react-router-dom'
 import { Form, FormGroup, ControlLabel, FormControl, HelpBlock, Button } from 'react-bootstrap';
 
 class SignUpForm extends Component {
@@ -115,7 +117,7 @@ validateFields(){
       newFormFieldMessage[validationResult['fieldName'] + 'ValError'] = validationResult['message'];
   }
 
-  console.log(newFormFieldValid)
+  console.log('newFormFieldValid', newFormFieldValid)
   /*
   this.setState(prevState =>({
       formFieldValid : {
@@ -128,18 +130,16 @@ validateFields(){
       } 
   }));*/
   this.setState(prevState =>({
-      ...prevState,
-      formFieldValid :  newFormFieldValid,
-      formFieldMessage : newFormFieldMessage
+    ...prevState,
+    formFieldValid :  newFormFieldValid,
+    formFieldMessage : newFormFieldMessage,
   }));
+  console.log('this.state.formFieldValid', this.state.formFieldValid);
 }
 
 onChange(e){
   const name = e.target.name;
   const value = e.target.value;
-  // Computed property name 
-  // callback에 e.target.~ 하면 왜 에러가 나는 것일까 ? 
-  //this.setState({ [name] : value});
   this.setState(prevState =>({
       formFieldInput:{
           ...prevState.formFieldInput,
@@ -152,6 +152,22 @@ onSubmit(e){
   //you cannot return false to prevent default behavior in React. You must call preventDefault explicitly. 
   e.preventDefault();
   this.validateFields();
+
+  const { userName, email, password } = this.state.formFieldInput;
+  const { userNameValid, emailValid, passwordValid, passwordConfirmationValid } = this.state.formFieldValid;
+
+  if( userNameValid === 'error' || emailValid === 'error' || passwordValid === 'error' || passwordConfirmationValid === 'error') {
+    console.log('유효성 x');
+    return false;
+  }
+
+  axios.post('http://localhost:8080/api/user/signup', { userName, email, password })
+  .then((result) => {
+    return <Redirect to='/signup'  />
+  })
+  .catch((err) => { console.log(err) });
+
+  console.log('onsubmit');
 }
 
 render (){

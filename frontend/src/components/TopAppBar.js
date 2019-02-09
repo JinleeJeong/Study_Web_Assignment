@@ -39,8 +39,11 @@ class TopAppBar extends Component {
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav pullRight>
-            <NavItem componentClass={Link} eventKey={1} href="/home" to="/home">
+            <NavItem componentClass={Link} eventKey={1} href="/write" to="/write">
               새 그룹 시작하기
+            </NavItem>
+            <NavItem componentClass={Link} eventKey={2} href="/contents" to="/contents">
+              현재 그룹 리스트
             </NavItem>
             <NavItem componentClass={Link} eventKey={1} href="/signin" to="/signin">
               로그인
