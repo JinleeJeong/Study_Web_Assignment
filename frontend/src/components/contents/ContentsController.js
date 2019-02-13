@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { FormGroup, ControlLabel, FormControl, ButtonGroup, Button } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
+/* global naver */
 
 class ContentsController extends Component {
   constructor() {
@@ -69,6 +70,21 @@ class ContentsController extends Component {
     .catch((err) => { console.log(err) });
   }
 
+  componentDidMount() {
+    const map = new naver.maps.Map('naverMap', {
+      center: new naver.maps.LatLng(37.3595704, 127.105399),
+      zoom: 10
+    });
+    const marker = new naver.maps.Marker({
+      position: new naver.maps.LatLng(37.3595704, 127.105399),
+      map: map
+    });
+  
+    naver.maps.Event.addListener(map, 'click', (e) => {
+        marker.setPosition(e.latlng);
+    });
+  }
+
   render() {
     return(
       <div className = "row">
@@ -98,6 +114,7 @@ class ContentsController extends Component {
 
             <FormGroup controlId="formControlsSelect">
               <ControlLabel>주소 선택</ControlLabel>
+              <div id="naverMap" style={{ width:'100%', height:'400px'}} />
               <FormControl componentClass="select" placeholder="select">
                 <option value="select">서울특별시 중구</option>
                 <option value="other">...</option>
