@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { FormGroup, ControlLabel, FormControl, ButtonGroup, Button } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
-import axios from 'axios';
+import { AppContext } from '../../contexts/appContext';
 /* global naver */
 
 class ContentsController extends Component {
+  static contextType = AppContext;
+
   constructor() {
     super();
 
@@ -18,7 +19,7 @@ class ContentsController extends Component {
 
     this.onChange = this.onChange.bind(this);
     this.onClick = this.onClick.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
+    this.addContents = this.addContents.bind(this);
   }
   
   //title, description 값들 입력
@@ -46,8 +47,8 @@ class ContentsController extends Component {
     }));
   }
   
-  //확인 버튼 클릭 시 axios 요청
-  onSubmit(e) {
+  //확인 버튼 클릭시 formData 초기화 후 context addContents에 formData 전달하여 호출
+  addContents = async (e) => {
     e.preventDefault();
     const { title, category, description } = this.state.inputValue;
     const coverImg = document.getElementById('coverImg').files[0];
@@ -63,11 +64,7 @@ class ContentsController extends Component {
       return formData.append(key, dataInObject[key]);
     });
 
-    axios.post('http://localhost:8080/api/contents/create', formData)
-    .then((result) => {
-      return <Redirect to='/' />
-    })
-    .catch((err) => { console.log(err) });
+    await this.context.actions.addContents(formData);
   }
 
   componentDidMount() {
@@ -135,7 +132,7 @@ class ContentsController extends Component {
                 <input type="file" id="coverImg" />
               </FormGroup>
 
-            <Button bsStyle="primary" block type = "submit" onClick={this.onSubmit}>
+            <Button bsStyle="primary" block type = "submit" onClick={this.addContents}>
               확인
             </Button>
           </form>

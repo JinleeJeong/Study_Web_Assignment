@@ -45,11 +45,11 @@ class TopAppBar extends Component {
             <NavItem componentClass={Link} eventKey={2} href="/contents" to="/contents">
               현재 그룹 리스트
             </NavItem>
-            <NavItem componentClass={Link} eventKey={1} href="/signin" to="/signin">
-              로그인
+            <NavItem componentClass={Link} eventKey={1} href="/test1" to="/test1">
+              테스트1
             </NavItem>
-            <NavItem componentClass={Link} eventKey={2} href="/signup" to="/signup">
-              회원가입
+            <NavItem componentClass={Link} eventKey={2} href="/test2" to="/test2">
+              테스트2
             </NavItem>
           </Nav>
         </Navbar.Collapse>

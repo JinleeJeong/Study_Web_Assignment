@@ -34,7 +34,7 @@ router.get('/', (req, res, next) => {
 });
 
 /* SAVE Contents */
-router.post('/create', upload, (req, res, next) => {
+router.post('/', upload, (req, res, next) => {
   Contents.create({...req.body, imageUrl: req.file.path}, (err, post) => {
     console.log(req);
     if (err) return next(err);

@@ -1,23 +1,22 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import { AppContext } from '../../contexts/appContext';
 
 class ContentsListView extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      contents : [],
-    }
+  static contextType = AppContext;
+
+  state = {
+    contents: [],
   }
-  componentDidMount() {
-    axios.get('http://localhost:8080/api/contents')
-    .then(res => {
-      this.setState({
-        contents: res.data,
-      })
+
+  getContents = async () => {
+    const contents = await this.context.actions.getContents();
+    this.setState({
+      contents: contents,
     })
-    .catch(err => {
-      console.log(err);
-    });
+  }
+  
+  componentDidMount() {
+    this.getContents();
   }
 
   render() {

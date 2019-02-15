@@ -27,10 +27,9 @@ class SignUpForm extends Component {
         passwordValError : '',
       },
   }
-  
-  this.onChange = this.onChange.bind(this);
-  this.onSubmit = this.onSubmit.bind(this);
-}
+    this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+  }
 
 validateFields(){
   
