@@ -10,7 +10,6 @@ const UserSchema = new Schema({
   },
   password: {
     type: String,
-    required: true
   },
   name: {
     type: String,
@@ -41,6 +40,10 @@ const UserSchema = new Schema({
   verified: {
     type: Boolean,
     default: false
+  },
+  strategy : {
+    type: String,
+    default : 'local',
   }
 });
 
@@ -53,9 +56,9 @@ module.exports.hashPassword = (password) => {
   return hash;
 }
 
-module.exports.checkExistingUser = (user) =>{
+module.exports.checkExistingUser = (user) => {
   
-  return  User.findOne({email : user.email})
+  return User.findOne({email : user.email})
     .then((err,user) => {
       if (err)
         return new Error('계정 중복 검사 실패');

@@ -1,9 +1,16 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+import {userSignout} from '../../actions/authenticationActions';
 import './TopAppBar.css';
-import logo from '../images/logo.png';
+import axios from 'axios';
+
+import logo from '../../images/logo.png';
 import {Navbar, NavItem, Nav, Popover, Tooltip, Modal, Button, FormGroup, ControlLabel, FormControl, HelpBlock , FieldGroup } from 'react-bootstrap';
 import {NavLink} from 'react-router-dom';
 import { inherits } from 'util';
+import {withRouter} from 'react-router';
+
 
 class TopAppBar extends Component {
   constructor(props, context) {
@@ -15,6 +22,7 @@ class TopAppBar extends Component {
     this.state = {
       show: false
     };
+    this.signOut = this.signOut.bind(this);
   }
 
   handleClose() {
@@ -23,6 +31,11 @@ class TopAppBar extends Component {
 
   handleShow() {
     this.setState({ show: true });
+  }
+
+  signOut(){
+    axios.post('/api/users/signout')
+    .then (()=> window.location.reload())
   }
 
   render() {
@@ -55,17 +68,21 @@ class TopAppBar extends Component {
         <Navbar.Collapse>
           <Nav pullRight>
             <NavItem>
-              <NavLink to = "/" style = {{color : '#777' ,textDecoration : 'none'}} eventKey={1}>
+              <NavLink to = "/" className = 'navLinkStyle' eventKey={1}>
                새 그룹 시작하기
               </NavLink>
             </NavItem>
+            
+            {this.props.signInInfo.status == null ? <NavItem style={{width:'100px'}}> </NavItem> : this.props.signInInfo.status == false ?
+            (<NavItem>
+                <NavLink to = "/signin"  className = 'navLinkStyle'  eventKey={2}>
+                  로그인
+                </NavLink>
+            </NavItem>):(<NavItem onClick = {this.signOut}>로그아웃</NavItem>)}
+            
+            
             <NavItem>
-              <NavLink to = "/signin" style = {{color : '#777' ,textDecoration : 'none'}} eventKey={2}>
-                로그인
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink to = "signup" style = {{color : '#777' ,textDecoration : 'none'}} eventKey={2}>
+              <NavLink to = "/signup" className = 'navLinkStyle' eventKey={2}>
                 회원가입
               </NavLink>
             </NavItem>
@@ -96,4 +113,14 @@ class TopAppBar extends Component {
   }
 }
 
-export default TopAppBar;
+TopAppBar.propType = {
+  signInInfo: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired
+}
+
+// store안의 state값을 props로 연결한다.
+const mapStateToProps = state => ({
+  signInInfo: state.userLogin.signInInfo
+})
+
+export default withRouter(connect(mapStateToProps,null)(TopAppBar));

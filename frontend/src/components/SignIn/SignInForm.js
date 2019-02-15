@@ -2,6 +2,9 @@ import React, {Component} from 'react';
 import validator from 'validator';
 import axios from 'axios';
 import { Form, FormGroup, ControlLabel, FormControl, HelpBlock, Button } from 'react-bootstrap';
+import PropTypes from 'prop-types';
+import {withRouter} from 'react-router';
+import {GoogleLoginButton} from 'react-social-login-buttons';
 
 class SignInForm extends Component {
 
@@ -11,11 +14,10 @@ class SignInForm extends Component {
     // formFieldInput : 해당 객체의 property에 사용자가 각 칸에 입력한 값들을 저장한다.
     // formFieldValid : 각 칸에 입력된 값 (formFiledInput 객체의 properties)의 상태를 저장한다(null, error, warning etc)  
     // formFieldMessage : 유효성 검사를 통과하지 못한 칸 아래에 나타낼 오류 메시지를 저장한다. 
-
     this.state = {
       formFieldInput : 
       {
-        email: 'waefwe@casdc.asdc',
+        email: 'wotj08090@gmail.com',
         password:'asdqwe123!',
       },
       formFieldValid :
@@ -33,17 +35,6 @@ class SignInForm extends Component {
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
-
-signInApiCall (){
-  axios.post('/api/users/signin',{
-    email: this.state.formFieldInput.email,
-    password: this.state.formFieldInput.password,
-  })
-  .then(res => {
-      console.log("성공");
-  })
-  .catch(err=> console.log(err));
-}
 
 setValidationResult (validationResult){
   
@@ -77,9 +68,18 @@ setValidationResult (validationResult){
     e.preventDefault();
   
     const {emailValid,passwordValid} = this.state.formFieldValid;
-  
+    const {email,password} = this.state.formFieldInput;
+
     if (emailValid === null && passwordValid === null) {
-          this.signInApiCall();
+      axios.post('/api/users/signin',{
+        email: email,
+        password: password,
+      })
+      .then(res => {
+        console.log(res.data.message)
+        this.props.history.push(res.data.url)
+      })
+      .catch(err=> console.log(err));
     }
     else
       console.log('Submit conditions are not satisfied..');
@@ -87,6 +87,7 @@ setValidationResult (validationResult){
   
   render (){
     return (
+      <div>
         <Form onSubmit = {this.onSubmit}>
         <h1 className = "FormHeader">로그인</h1>
           <FormGroup
@@ -97,7 +98,8 @@ setValidationResult (validationResult){
                 value = {this.state.formFieldInput.email}
                 onChange={this.onChange}
                 type = "text"
-                name="email">
+                name="email"
+                placeholder = "이메일">
               </FormControl>
               <FormControl.Feedback/>
                 <HelpBlock>{this.state.formFieldMessage.emailValError}</HelpBlock>
@@ -110,7 +112,8 @@ setValidationResult (validationResult){
               value = {this.state.formFieldInput.password}
               onChange={this.onChange}
               type = "password"
-              name="password">
+              name="password"
+              placeholder="비밀번호">
             </FormControl>
             <FormControl.Feedback/>
               <HelpBlock>{this.state.formFieldMessage.passwordValError}</HelpBlock>
@@ -119,13 +122,20 @@ setValidationResult (validationResult){
             <Button bsStyle="primary" block type = "submit">
               확인
             </Button>
-          </FormGroup>
-        </Form>
+            </FormGroup>
+          </Form>
+          <a href = "http://localhost:5000/api/users/google_auth"><GoogleLoginButton text={"구글 로그인"} align = {'center'}></GoogleLoginButton></a>
+          <a href = "http://localhost:5000/api/users/naver_auth"><Button bsStyle ="success" block>네이버 계정으로 시작하기</Button></a>
+        </div>
     );
   }
 }
 
-export default SignInForm
+SignInForm.propTypes = {
+  history: PropTypes.object.isRequired
+}
+
+export default withRouter(SignInForm);
 
 // form에 입력된 값의 유효성 검사를 수행하는 helper class
 class FormChecker {
@@ -164,6 +174,5 @@ class FormChecker {
       }
       
       return validResult;
-
   }
 }

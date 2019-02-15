@@ -7,8 +7,28 @@ const User = require('../../models/Users');
 const Token = require('../../models/Token');
 const mailer = require('../../service/mailer');
 const passport = require('passport');
+const url = require('url');
 const router = express.Router();
 let newUser;
+
+function socialLoginRedirect(service, req, res, next) {
+  return passport.authenticate(service,async (err, user, info) => {
+    const message = encodeURIComponent(info.message);
+    const state = encodeURIComponent(info.state);
+    const redirectURL = !info.url ? req.session.redirectTo : info.url;
+
+    if (user){
+      await req.logIn(user, (err)=>{
+        if (err)
+          next(err);
+      })
+    }
+    
+    res.redirect(`${redirectURL}/?message = ${message}&state = ${state}`);
+  })(req, res, next)
+}
+
+
 
 // @route   GET api/Users
 // @desc    Get All users
@@ -105,10 +125,71 @@ router.get('/verify',(req, res , next)=>{
 });
 
 // Login handle
-router.post('/signin', passport.authenticate('local'),
-  (req, res)=>{
-    // If this function gets called, authentication was successful.
-    res.send(req.user)
+router.post('/signin',(req, res, next) => {
+  
+  passport.authenticate('local', async (err,user,info)=>{
+    if (err) return next(err)
+    
+    if (user){
+      await req.logIn(user, (err)=>{
+        if (err)
+          next(err);
+      })
+    }
+    
+    res.send(info)
+  })(req, res, next)
+// If this function gets called, authentication was successful.
+})
+  
+  
+router.get('/session',(req, res, next)=>{
+  console.log(req.session.passport.user);
+  res.send(req.session)
+});
+
+//If user is logged in, passport.js will create user object in req for every request in express.js,
+//which you can check for existence in any middleware:
+router.post('/checkAuth',(req, res, next)=>{
+  if (req.user){
+    console.log("login")
+    res.send({
+      status : true,
+      email : req.user.email
+    });
+  }
+  else{
+    res.send({
+      status : false,
+      email : ''
+    });
+  }
+});
+
+router.post('/signout',(req, res, next)=>{
+  req.logOut();
+  res.send({
+    status:false,
+    email:''
   });
+})
+
+router.get('/google_auth',(req, res, next)=>{
+  req.session.redirectTo = req.headers.referer;
+  passport.authenticate('google', {scope: ['email','profile']})(req,res,next);
+})
+
+router.get('/google_auth/redirect', (req, res, next) => {
+  socialLoginRedirect('google', req, res, next)
+});
+
+router.get('/naver_auth',(req, res, next)=>{
+  req.session.redirectTo = req.headers.referer;
+  passport.authenticate('naver')(req,res,next);
+});
+
+router.get('/naver_auth/redirect',(req, res, next) =>{
+  socialLoginRedirect('naver', req, res, next)
+});
 
 module.exports = router;

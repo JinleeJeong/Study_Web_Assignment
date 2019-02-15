@@ -1,8 +1,18 @@
 import React, { Component, Fragment } from 'react';
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 import './Template.css';
 import { ButtonToolbar, Button, Row, Col, Image } from 'react-bootstrap';
+import {checkAuth} from '../actions/authenticationActions';
+
 
 class Template extends Component {
+
+  constructor (props){
+    super(props);
+    this.props.checkAuth();
+  }
+
   render() {
     return (
       <Fragment>
@@ -73,4 +83,8 @@ class Template extends Component {
   }
 }
 
-export default Template;
+Template.PropTypes = {
+  checkAuth: PropTypes.func.isRequired
+}
+
+export default connect (null,{checkAuth})(Template)

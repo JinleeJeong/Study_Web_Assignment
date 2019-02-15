@@ -5,8 +5,10 @@ const users = require('./routes/api/users');
 const passport = require('passport');
 const session = require('express-session');
 
-const app = express();
+const cors = require('cors')
 
+const app = express();
+app.use(cors());
 //DB config
 const db = require('./config/keys').mongoURI;
 
@@ -18,8 +20,6 @@ mongoose.connect(db)
 //Bodyparser Middleware
 app.use(bodyParser.json());
 
-require('./config/passport')(passport);
-
 //Express Session 
 app.use(session({
   secret: 'secret',
@@ -30,7 +30,7 @@ app.use(session({
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
-
+require('./config/passport')(passport);
 //Use Routes
 app.use('/api/users',users);
 

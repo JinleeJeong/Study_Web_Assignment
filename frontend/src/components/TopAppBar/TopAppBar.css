@@ -17,3 +17,8 @@
 .modal-body {
   text-align: center;
 }
+
+.navLinkStyle {
+  color : #777;
+  text-decoration : none !important 
+}

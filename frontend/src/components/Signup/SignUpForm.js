@@ -1,7 +1,11 @@
 import React, {Component} from 'react';
 import validator from 'validator';
 import axios from 'axios';
+
 import { Form, FormGroup, ControlLabel, FormControl, HelpBlock, Button } from 'react-bootstrap';
+import {withRouter} from 'react-router'
+import PropTypes from 'prop-types';
+import {GoogleLoginButton} from 'react-social-login-buttons';
 
 class SignUpForm extends Component {
 
@@ -47,8 +51,10 @@ registrationApiCall (){
     name: this.state.formFieldInput.userName,
   })
   .then(res => {
-    if (res.data.message == "email 인증이 필요합니다.")
+    if (res.data.message == "회원가입에 성공했습니다."){
       console.log("성공");
+      this.props.history.push('/signin');
+    }
     else if(res.data.message == "중복된 아이디입니다.")
       this.setValidationResult({
         fieldName: 'email',
@@ -229,72 +235,81 @@ letterCondition(inpStr,conditions){
 
 render (){
   return (
-      <Form onSubmit = {this.onSubmit}>
-      <h1 className = "FormHeader">회원가입</h1>
-        <FormGroup
-          validationState = {this.state.formFieldValid.userNameValid} 
-        >
-        <ControlLabel>이름</ControlLabel>
-          <FormControl
-            value = {this.state.formFieldInput.userName}
-            onChange={this.onChange}
-            type = "text"
-            name="userName">
-          </FormControl>
-          <FormControl.Feedback/>
-            <HelpBlock>{this.state.formFieldMessage.userNameValError}</HelpBlock>
-          </FormGroup>
-
+    <div>
+        <Form onSubmit = {this.onSubmit}>
+        <h1 className = "FormHeader">회원가입</h1>
           <FormGroup
-            validationState = {this.state.formFieldValid.emailValid}
+            validationState = {this.state.formFieldValid.userNameValid} 
           >
-          <ControlLabel>이메일 주소</ControlLabel>
+          <ControlLabel>이름</ControlLabel>
             <FormControl
-              value = {this.state.formFieldInput.email}
+              value = {this.state.formFieldInput.userName}
               onChange={this.onChange}
               type = "text"
-              name="email">
+              name="userName">
             </FormControl>
             <FormControl.Feedback/>
-              <HelpBlock>{this.state.formFieldMessage.emailValError}</HelpBlock>
+              <HelpBlock>{this.state.formFieldMessage.userNameValError}</HelpBlock>
             </FormGroup>
-          <FormGroup
-            validationState = {this.state.formFieldValid.passwordValid}
-          >
-          <ControlLabel>비밀번호</ControlLabel>
-          <FormControl
-            value = {this.state.formFieldInput.password}
-            onChange={this.onChange}
-            type = "password"
-            name="password">
-          </FormControl>
-          <FormControl.Feedback/>
-            <HelpBlock>{this.state.formFieldMessage.passwordValError}</HelpBlock>
-          </FormGroup>
-          <FormGroup
-            validationState = {this.state.formFieldValid.passwordConfirmationValid}
-          >
-          <ControlLabel>비밀번호 확인</ControlLabel>
+
+            <FormGroup
+              validationState = {this.state.formFieldValid.emailValid}
+            >
+            <ControlLabel>이메일 주소</ControlLabel>
+              <FormControl
+                value = {this.state.formFieldInput.email}
+                onChange={this.onChange}
+                type = "text"
+                name="email">
+              </FormControl>
+              <FormControl.Feedback/>
+                <HelpBlock>{this.state.formFieldMessage.emailValError}</HelpBlock>
+              </FormGroup>
+            <FormGroup
+              validationState = {this.state.formFieldValid.passwordValid}
+            >
+            <ControlLabel>비밀번호</ControlLabel>
             <FormControl
-              value = {this.state.formFieldInput.passwordConfirmation}
+              value = {this.state.formFieldInput.password}
               onChange={this.onChange}
               type = "password"
-              name="passwordConfirmation">
+              name="password">
             </FormControl>
             <FormControl.Feedback/>
-            <HelpBlock>{this.state.formFieldMessage.passwordConfirmationValError}</HelpBlock>
-          </FormGroup>
-          <FormGroup>
-            <Button bsStyle="primary" block type = "submit">
-              확인
-            </Button>
-          </FormGroup>
-      </Form>
+              <HelpBlock>{this.state.formFieldMessage.passwordValError}</HelpBlock>
+            </FormGroup>
+            <FormGroup
+              validationState = {this.state.formFieldValid.passwordConfirmationValid}
+            >
+            <ControlLabel>비밀번호 확인</ControlLabel>
+              <FormControl
+                value = {this.state.formFieldInput.passwordConfirmation}
+                onChange={this.onChange}
+                type = "password"
+                name="passwordConfirmation">
+              </FormControl>
+              <FormControl.Feedback/>
+              <HelpBlock>{this.state.formFieldMessage.passwordConfirmationValError}</HelpBlock>
+            </FormGroup>
+            <FormGroup>
+              <Button bsStyle = 'primary' block type = "submit">
+                확인
+              </Button>
+            </FormGroup>
+        </Form>
+        <a href = "http://localhost:5000/api/users/google_auth"><GoogleLoginButton text={"구글 계정으로 시작하기"} align = {'center'}></GoogleLoginButton></a>
+        <a href = "http://localhost:5000/api/users/naver_auth"><Button bsStyle ="success" block>네이버 계정으로 시작하기</Button></a>
+
+      </div>
     );
   }
 }
 
-export default SignUpForm
+SignUpForm.propTypes = {
+  history: PropTypes.object.isRequired
+}
+
+export default withRouter(SignUpForm)
 
 // form에 입력된 값의 유효성 검사를 수행하는 helper class
 class FormChecker {
