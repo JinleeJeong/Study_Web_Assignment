@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import './SignInPage.css';
-import SignInForm from './SignInForm';
+import './MyMessagePage.css';
 import {checkAuth} from '../../actions/authenticationActions';
 import {useContext} from '../../provider/AppProvider';
-class SignInPage extends Component {
+
+class MyMessagePage extends Component {
 
     constructor (props){
       super(props);
@@ -16,11 +16,11 @@ class SignInPage extends Component {
         return (
             <div className = "row">
                 <div className = "col-md-4 col-md-offset-4">
-                    <SignInForm/>
+                    MessagePage
                 </div>
             </div>
         );
     }
 }
 
-export default useContext(SignInPage);
+export default useContext(MyMessagePage);

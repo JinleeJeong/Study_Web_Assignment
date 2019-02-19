@@ -6,12 +6,13 @@ import './SignUpPage.css';
 
 import SignUpForm from './SignUpForm';
 import {checkAuth} from '../../actions/authenticationActions';
+import {useContext} from '../../provider/AppProvider';
 
 class SignUpPage extends Component {
   
   constructor (props){
     super(props);
-    this.props.checkAuth();
+    this.props.actions.checkAuth();
   }
 
   render (){
@@ -25,9 +26,5 @@ class SignUpPage extends Component {
   }
 }
 
-SignUpPage.PropTypes = {
-  checkAuth: PropTypes.func.isRequired
-}
-
-export default connect (null,{checkAuth})(SignUpPage)
+export default useContext(SignUpPage);
 

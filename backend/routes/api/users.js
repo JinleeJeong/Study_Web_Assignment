@@ -28,8 +28,6 @@ function socialLoginRedirect(service, req, res, next) {
   })(req, res, next)
 }
 
-
-
 // @route   GET api/Users
 // @desc    Get All users
 // @access Public
@@ -150,7 +148,7 @@ router.get('/session',(req, res, next)=>{
 
 //If user is logged in, passport.js will create user object in req for every request in express.js,
 //which you can check for existence in any middleware:
-router.post('/checkAuth',(req, res, next)=>{
+router.post('/checkAuth',(req, res, next )=>{
   if (req.user){
     console.log("login")
     res.send({
