@@ -2,6 +2,8 @@ import React, { Component, Fragment } from 'react';
 import './Footer.css';
 // import { ButtonToolbar, Button, Row, Col, Image } from 'react-bootstrap';
 class Footer extends Component {
+
+  
     render() {
       return (
         <Fragment>

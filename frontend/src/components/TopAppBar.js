@@ -33,14 +33,14 @@ class TopAppBar extends Component {
       <Navbar.Header>
         <Navbar.Brand>
           <Link to="/">
-            <img src={logo} alt="logo" height="35" width="95" />
+            <img src={logo} alt="logo" height="40" width="150" />
           </Link>
         </Navbar.Brand>
         <Navbar.Toggle />
       </Navbar.Header>
       <Navbar.Collapse>
         <Nav pullRight>
-          <NavItem componentClass={Link} eventKey={1} href="/home" to="/home">
+          <NavItem componentClass={Link} eventKey={1} href="/contentscontroller" to="/contentscontroller">
             새 그룹 시작하기
           </NavItem>
           <NavItem componentClass={Link} eventKey={1} href="/signin" to="/signin">

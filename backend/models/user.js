@@ -6,17 +6,9 @@ const UserSchema = new Schema(
   {
     email : String,
     password: String,
-    passwordConfirmationValid: String
+    passwordConfirmationValid: String,
+    count: Number,
   });
 
-// const BoardSchema = new Schema({
-//   name : String,
-//   title : String,
-//   description : String,
-//   category : String,
-//   location : String,
-//   partner : String
-// })
 // export the new Schema so we could modify it using Node.js
 module.exports = mongoose.model("User", UserSchema);
-// module.exports = mongoose.model("Board", BoardSchema);
