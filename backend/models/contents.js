@@ -5,6 +5,7 @@ const ContentsSchema = new Schema({
   title: String,
   category: Array,
   description: String,
+  studyLocation: String,
   imageUrl: String,
 });
 
