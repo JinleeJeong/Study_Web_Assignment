@@ -1,18 +1,29 @@
 import React, { Component } from 'react';
-import Template from './components/Template';
-import TopAppBar from './components/TopAppBar';
-import test from './images/test.png';
-import SignUpPage from './components/SignUpPage';
+import { BrowserRouter, Route } from 'react-router-dom';
+import Template from './components/UIElements/Template';
 import './App.css';
+import TopAppBar from './components/UIElements/TopAppBar';
+import ContentsController from './components/contents/ContentsController';
+import ContentsListView from './components/contents/ContentsListView';
+import NearContentsListView from './components/contents/NearContentsListView';
+import AppContextProvider from './contexts/appContext';
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <TopAppBar />
-        <Template test={test} />
-        <SignUpPage />
-      </div>
+      <>
+        <AppContextProvider>
+          <BrowserRouter>
+            <div className="App">
+              <TopAppBar />
+              <Route exact path="/" component={Template} />
+              <Route path="/write" component={ContentsController} />
+              <Route path="/contents" component={ContentsListView} />
+              <Route path="/near" component={NearContentsListView} />
+            </div>
+          </BrowserRouter>
+        </AppContextProvider>
+      </>
     );
   }
 }
