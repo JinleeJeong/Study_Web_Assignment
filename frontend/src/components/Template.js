@@ -1,9 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
 import './Template.css';
 import { ButtonToolbar, Button, Row, Col, Image } from 'react-bootstrap';
-import {checkAuth} from '../actions/authenticationActions';
 import {useContext} from '../provider/AppProvider';
 
 class Template extends Component {

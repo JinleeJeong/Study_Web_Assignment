@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import {userSignout} from '../../actions/authenticationActions';
 import './TopAppBar.css';
 import axios from 'axios';
 

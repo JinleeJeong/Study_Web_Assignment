@@ -5,7 +5,6 @@ import {connect} from 'react-redux';
 import './SignUpPage.css';
 
 import SignUpForm from './SignUpForm';
-import {checkAuth} from '../../actions/authenticationActions';
 import {useContext} from '../../provider/AppProvider';
 
 class SignUpPage extends Component {

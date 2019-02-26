@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import './SignInPage.css';
 import SignInForm from './SignInForm';
-import {checkAuth} from '../../actions/authenticationActions';
 import {useContext} from '../../provider/AppProvider';
 class SignInPage extends Component {
 

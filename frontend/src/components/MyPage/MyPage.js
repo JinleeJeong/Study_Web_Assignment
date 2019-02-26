@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 import './MyPage.css';
-import {checkAuth} from '../../actions/authenticationActions';
 import {useContext} from '../../provider/AppProvider';
 
 class MyPage extends Component {
@@ -16,7 +15,7 @@ class MyPage extends Component {
         return (
             <div className = "row">
                 <div className = "col-md-4 col-md-offset-4">
-                  Hi
+                  
                 </div>
             </div>
         );

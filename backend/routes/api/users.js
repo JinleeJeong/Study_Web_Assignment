@@ -153,12 +153,14 @@ router.post('/checkAuth',(req, res, next )=>{
     console.log("login")
     res.send({
       status : true,
+      id : req.user._id,
       email : req.user.email
     });
   }
   else{
     res.send({
       status : false,
+      id: '',
       email : ''
     });
   }
