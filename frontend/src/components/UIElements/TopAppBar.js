@@ -11,15 +11,21 @@ class TopAppBar extends Component {
         <Navbar.Header>
           <Navbar.Brand>
             <Link to="/">
-              <img src={logo} alt="logo" height="35" width="95" />
+              <img src={logo} alt="logo" height="40" width="150" />
             </Link>
           </Navbar.Brand>
           <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav pullRight>
-            <NavItem componentClass={Link} eventKey={2} href="/contents" to="/contents">
-              현재 스터디 리스트
+            <NavItem componentClass={Link} eventKey={1} href="/contents" to="/contents">
+              현재 스터디 목록            
+            </NavItem>
+            <NavItem componentClass={Link} eventKey={1} href="/signin" to="/signin">
+              로그인
+            </NavItem>
+            <NavItem componentClass={Link} eventKey={1} href="/signup" to="/signup">
+              회원가입
             </NavItem>
           </Nav>
         </Navbar.Collapse>

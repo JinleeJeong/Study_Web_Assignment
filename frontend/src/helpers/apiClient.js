@@ -4,7 +4,7 @@ const apiUrl = 'http://localhost:8080/api';
 const methods = ['get', 'post'];
 
 function formatUrl(path) {
-  return `${apiUrl}/${path}`;
+  return `${apiUrl}${path}`;
 }
 
 class ApiClient {
