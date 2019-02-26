@@ -104,11 +104,11 @@ class ContentsController extends Component {
             <FormGroup>
               <ControlLabel>분류 선택</ControlLabel><br />
               <ButtonGroup>
-                <Button onClick={(e) => { this.setState({ category: e.target.value })}} name="category" value="영어 회화">영어 회화</Button>
-                <Button onClick={(e) => { this.setState({ category: e.target.value })}} name="category" value="자소서">자소서</Button>
-                <Button onClick={(e) => { this.setState({ category: e.target.value })}} name="category" value="면접">면접</Button>
-                <Button onClick={(e) => { this.setState({ category: e.target.value })}} name="category" value="알고리즘">알고리즘</Button>
-                <Button onClick={(e) => { this.setState({ category: e.target.value })}} name="category" value="프로젝트">프로젝트</Button>
+                <Button onClick={(e) => { this.setState({ category: [...this.state.category, e.target.value] })}} name="category" value="영어 회화">영어 회화</Button>
+                <Button onClick={(e) => { this.setState({ category: [...this.state.category, e.target.value] })}} name="category" value="자소서">자소서</Button>
+                <Button onClick={(e) => { this.setState({ category: [...this.state.category, e.target.value] })}} name="category" value="면접">면접</Button>
+                <Button onClick={(e) => { this.setState({ category: [...this.state.category, e.target.value] })}} name="category" value="알고리즘">알고리즘</Button>
+                <Button onClick={(e) => { this.setState({ category: [...this.state.category, e.target.value] })}} name="category" value="프로젝트">프로젝트</Button>
               </ButtonGroup>
             </FormGroup>
 
