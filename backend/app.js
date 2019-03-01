@@ -1,35 +1,83 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import mongoose from 'mongoose';
-import posts from './routes/posts';
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const createError = require('http-errors');
+const indexRouter = require('./routes/api/index');
+const contents = require('./routes/api/contents');
+const session = require('express-session');
+const passport = require('passport');
+const users = require('./routes/api/users');
+const messages = require('./routes/api/messages');
+
 
 const app = express();
 
-let port = 8080;
+//Connect to Mongo
+const db = require('./config/keys').mongoURI;
+mongoose.connect(db)
+  .then(()=>console.log('MongoDB Connected'))
+  .catch(err => console.log(err));
 
-let db = mongoose.connection;
-db.on('error', console.error);
-db.once('open', function () {
-  // CONNECTED TO MONGODB SERVER
-  console.log("Connected to mongod server");
+app.use(cors({
+  origin: true,
+  credentials: true,
+}));
+
+//Express session
+const sessionMiddleware = session({
+  secret: 'secret',
+  resave: true,
+  saveUninitialized: true
 });
-mongoose.connect('mongodb://localhost:27017/post_magazine');
+app.use(sessionMiddleware);
 
-// [CONFIGURE APP TO USE bodyParser]
-app.use(bodyParser.urlencoded({
-    extended: true
-  }));
+//Bodyparser Middleware
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
-// 경로 '/' 로 들어오는 요청들은 public 폴더로 정적 라우팅합니다.
-app.use('/', express.static(__dirname + '/../public'));
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+require('./config/passport')(passport);
 
-app.get('/hello', (req, res) => {
-    return res.send('익스프레스 서버입니다.');
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+//Use Routes
+app.use('/api/users',users);
+app.use('/api/messages',messages);
+app.use('/', indexRouter);
+app.use('/api/contents', contents);
+app.use('/coverimg', express.static('coverimg'));
+
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
 });
-app.use('/posts', posts);
 
 
-const server = app.listen(port, () => {
-    console.log('Express listening on port', port);
+// error handler
+/*
+template engine 과 관련된 에러 -> 일단 주석처리
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
 });
+*/
+
+module.exports.app = app;
+module.exports.sessionMiddleware = sessionMiddleware;
