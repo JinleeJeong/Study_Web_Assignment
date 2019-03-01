@@ -12,5 +12,5 @@ module.exports = {
   
   //Naver SignIn
   NAVER_CLIENT_ID: 'wFgt24fgddiw1kOL4yXU',
-  NAVER_CLIENT_SECRET: 'vnsxQQ22xF'
+  NAVER_CLIENT_SECRET: 'vnsxQQ22xF',
 }

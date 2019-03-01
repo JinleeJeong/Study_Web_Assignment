@@ -2,13 +2,11 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 import './MyPage.css';
-import {useContext} from '../../provider/AppProvider';
 
 class MyPage extends Component {
 
     constructor (props){
       super(props);
-      this.props.actions.checkAuth();
     }
 
     render (){
@@ -22,4 +20,4 @@ class MyPage extends Component {
     }
 }
 
-export default useContext(MyPage);
+export default MyPage;

@@ -41,7 +41,8 @@ function socialLogin (service,profile,done){
 
   // 로그인 or 회원가입을 요청한 유저의 Email이 DB에 존재하는지 판단한다. 
   User.findOne({email: userProfile.email})
-    .then(user => { // 회원가입이 되어있지 않은 유저인 경우
+    .then(user => { 
+      // 회원가입이 되어있지 않은 유저인 경우
       if (!user){
         // 유저 정보를 바탕으로 user model을 만든다.  
         newUser = new User(userProfile)
@@ -54,8 +55,11 @@ function socialLogin (service,profile,done){
           .catch(err => done(err,null,{state: 'fail', message:'회원 가입중 오류가 발생했습니다.', url: null}));   
 
       }else{
-        // 이미 회원인 경우 
-        done(null,user,{state: 'success', message:'로그인에 성공했습니다.', url: 'http://localhost:3000'});
+        // 이미 회원인 경우
+        if (user.strategy == "local")  // local strategy로 가입한 경우
+          done(null,null,{state: 'fail', message:'이미 가입된 아이디입니다.', url: null});
+        else // 로그인 성공
+          done(null,user,{state: 'success', message:'로그인에 성공했습니다.', url: 'http://localhost:3000'});
       }
     })
     .catch(err => done(err,null,{state: 'fail', message:'회원 조회중 오류가 발생했습니다.', url: null}));
@@ -102,7 +106,7 @@ module.exports = (passport) => {
       new GoogleStrategy({
         clientID: GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
-        callbackURL: 'http://localhost:5000/api/users/google_auth/redirect'	
+        callbackURL: 'http://localhost:8080/api/users/google_auth/redirect'	
       },
       (accessToken, refreshToken, profile, done) => {
         socialLogin('Google',profile,done);
@@ -115,7 +119,7 @@ module.exports = (passport) => {
       new NaverStrategy({
         clientID: NAVER_CLIENT_ID,
         clientSecret: NAVER_CLIENT_SECRET,
-        callbackURL: 'http://localhost:5000/api/users/naver_auth/redirect'	
+        callbackURL: 'http://localhost:8080/api/users/naver_auth/redirect'	
       },
       (accessToken, refreshToken, profile, done) => {
         socialLogin('Naver',profile,done);

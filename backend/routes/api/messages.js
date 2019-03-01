@@ -2,7 +2,7 @@ const express = require('express');
 const Messages = require('../../models/Message');
 const router = express.Router();
 
-
+// 특정 유저에게 온 message를 보내주는 router
 router.post('/', (req,res,next) => {
   if (req.user){
     const {total, showNum, page} = req.body;
@@ -32,6 +32,7 @@ router.post('/', (req,res,next) => {
   }
 });
 
+// 현재 읽지 않은 message의 개수를 반환하는 router
 router.get('/unseenmessages',(req,res,next)=>{
   if (req.user){
     Messages.countDocuments({recipient: req.user.id, seen: false})

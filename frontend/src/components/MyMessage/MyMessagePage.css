@@ -1,8 +1,9 @@
 .page {
-  width: 80vw;
+  width: 70vw;
+  min-height: 60vh;
   margin: 10vh auto;
-  
 }
+
 .aboveList{
   margin-left: auto;
   margin-bottom: 30px;

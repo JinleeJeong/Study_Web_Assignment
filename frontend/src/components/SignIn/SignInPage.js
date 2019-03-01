@@ -1,25 +1,28 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
-
 import './SignInPage.css';
 import SignInForm from './SignInForm';
-import {useContext} from '../../provider/AppProvider';
+import { AppContext } from '../../contexts/appContext';
+
 class SignInPage extends Component {
+    static contextType = AppContext;
 
     constructor (props){
       super(props);
-      this.props.actions.checkAuth();
+    }
+
+    componentDidMount() {
+      this.context.actions.checkAuth();
     }
 
     render (){
         return (
-            <div className = "row">
-                <div className = "col-md-4 col-md-offset-4">
-                    <SignInForm/>
-                </div>
+            <div className = "page">
+              <div className = "formSize">
+              <SignInForm/>
+              </div>
             </div>
         );
     }
 }
 
-export default useContext(SignInPage);
+export default SignInPage;

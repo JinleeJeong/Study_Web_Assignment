@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
-import validator from 'validator';
-import axios from 'axios';
 import { Form, FormGroup, ControlLabel, FormControl, HelpBlock, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import {withRouter} from 'react-router';
-import {GoogleLoginButton} from 'react-social-login-buttons';
+import apiClient from '../../helpers/apiClient';
 
 class SignInForm extends Component {
 
@@ -17,8 +15,8 @@ class SignInForm extends Component {
     this.state = {
       formFieldInput : 
       {
-        email: 'wotj08090@gmail.com',
-        password:'asdqwe123!',
+        email: '',
+        password:'',
       },
       formFieldValid :
       {
@@ -71,13 +69,13 @@ setValidationResult (validationResult){
     const {email,password} = this.state.formFieldInput;
 
     if (emailValid === null && passwordValid === null) {
-      axios.post('/api/users/signin',{
+      apiClient.post('/users/signin',{
         email: email,
         password: password,
       })
       .then(res => {
-        console.log(res.data.message)
-        this.props.history.push(res.data.url)
+        console.log(res.message)
+        this.props.history.push(res.url)
       })
       .catch(err=> console.log(err));
     }
@@ -88,7 +86,7 @@ setValidationResult (validationResult){
   render (){
     return (
       <div>
-        <Form onSubmit = {this.onSubmit}>
+        <Form  onSubmit = {this.onSubmit}>
         <h1 className = "FormHeader">로그인</h1>
           <FormGroup
             validationState = {this.state.formFieldValid.emailValid}
@@ -105,6 +103,7 @@ setValidationResult (validationResult){
                 <HelpBlock>{this.state.formFieldMessage.emailValError}</HelpBlock>
               </FormGroup>
             <FormGroup
+              style = {{marginBottom: '50px'}}
               validationState = {this.state.formFieldValid.passwordValid}
             >
             <ControlLabel>비밀번호</ControlLabel>
@@ -113,19 +112,21 @@ setValidationResult (validationResult){
               onChange={this.onChange}
               type = "password"
               name="password"
-              placeholder="비밀번호">
+              placeholder="특수문자 포함 최소 8자 ~ 최대 20자 이내로 입력합니다.">
             </FormControl>
             <FormControl.Feedback/>
               <HelpBlock>{this.state.formFieldMessage.passwordValError}</HelpBlock>
             </FormGroup>
             <FormGroup>
-            <Button bsStyle="primary" block type = "submit">
-              확인
-            </Button>
+              <Button bsStyle="primary" block type = "submit">
+                확인
+              </Button>
             </FormGroup>
           </Form>
-          <a href = "http://localhost:5000/api/users/google_auth"><GoogleLoginButton text={"구글 로그인"} align = {'center'}></GoogleLoginButton></a>
-          <a href = "http://localhost:5000/api/users/naver_auth"><Button bsStyle ="success" block>네이버 계정으로 시작하기</Button></a>
+          <div>
+            <a className = "removeLinkDec" href = "http://localhost:8080/api/users/google_auth"><Button style = {{marginBottom: '15px'}} bsStyle ="danger" block>구글 계정으로 시작하기</Button></a>
+            <a className = "removeLinkDec" href = "http://localhost:8080/api/users/naver_auth"><Button style = {{marginBottom: '15px'}} bsStyle ="success" block>네이버 계정으로 시작하기</Button></a>
+          </div>
         </div>
     );
   }
@@ -136,43 +137,3 @@ SignInForm.propTypes = {
 }
 
 export default withRouter(SignInForm);
-
-// form에 입력된 값의 유효성 검사를 수행하는 helper class
-class FormChecker {
-  // 객체 생성시 필드명, 필드값, 유효성 조건을 저장한다. 
-  constructor (fieldName,value,validationInfo){
-      this.fieldName = fieldName;
-      this.value = value;
-      this.validationInfo = validationInfo;
-  }
-
-  // 특정 필드가 주어진 복수의 유효성 조건을 만족하는지 판단한다.
-  // 판단 후 validResult 객체로 검사 결과를 반환한다.
-  validate () {
-
-      let validResult = {
-          fieldName : this.fieldName,
-          isCorrect : null,
-          message : ''
-      }
-
-      if (this.validationInfo.length == 0)
-          return validResult;
-
-      for (var rule of this.validationInfo){
-
-          if (!rule['method'](this.value,rule['args'])){
-              
-              validResult = {
-                  fieldName : this.fieldName,
-                  isCorrect : 'error',
-                  message : rule['message']
-              };
-
-              return validResult;
-          }
-      }
-      
-      return validResult;
-  }
-}

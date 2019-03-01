@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const config = require('../config/keys');
 
+// MailGun 설정
 const transport = nodemailer.createTransport({
   service: 'Mailgun',
   auth: {
@@ -12,6 +13,7 @@ const transport = nodemailer.createTransport({
   }
 });
 
+// 메일 전송
 module.exports.sendEmail = (from, to, subject, html) => {
   return new Promise ((resolve,reject) => {
     transport.sendMail({from, subject, to, html}, (err, info)=> 
