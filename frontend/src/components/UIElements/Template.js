@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import SearchInput, { createFilter } from 'react-search-input';
-import { ButtonToolbar, Button } from 'react-bootstrap';
 import movie from '../../images/movie.mp4';
 import { Link } from 'react-router-dom';
 import { AppContext } from '../../contexts/appContext';
@@ -84,9 +83,9 @@ class Template extends Component {
                 <video loop muted={this.props.muted} autoPlay={true}>
                     <source type="video/mp4" data-reactid=".0.1.0.0.0" src={movie} />
                 </video>
-                <ButtonToolbar className="background_start_button">
-                  <Link to={`/write?lat=${lat}&lng=${lng}`}><Button>스터디 시작하기</Button></Link>
-                </ButtonToolbar>
+                
+                  <Link to={`/write?lat=${lat}&lng=${lng}`}><button>스터디 시작하기</button></Link>
+                
               <div className="background_search">
                 <div className="background_search_Text">
                 <SearchInput className="searchInput" onChange={this.searchUpdated} placeholder="Search Category" />

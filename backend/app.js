@@ -16,7 +16,7 @@ const messages = require('./routes/api/messages');
 
 const app = express();
 
-//Connect to Mongo
+//Connect to Mongo~
 const db = require('./config/keys').mongoURI;
 mongoose.connect(db)
   .then(()=>console.log('MongoDB Connected'))
