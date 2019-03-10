@@ -28,9 +28,10 @@ class CateGory extends Component {
     //     console.log(this.state.boards);
     //   });
     const { searchTerm } = this.state;
+    console.log(this.state.searchTerm);
     this.setState({
       boards: await this.context.actions.getContentsByCategory(searchTerm)
-    });  
+    });
   };
 
   

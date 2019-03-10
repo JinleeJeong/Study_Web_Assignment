@@ -8,7 +8,6 @@ import SignUpPage from './components/Signup/SignUpPage';
 import SignInPage from './components/SignIn/SignInPage';
 import MyMessagePage from './components/MyMessage/MyMessagePage';
 import MyPage from './components/MyPage/MyPage';
-
 import Template from './components/UIElements/Template';
 import './App.css';
 import TopAppBar from './components/UIElements/TopAppBar/TopAppBar';
@@ -39,7 +38,6 @@ class App extends Component {
               <Route path="/contents" component={ContentsListView} />
               <Route path="/near" component={NearContentsListView} />
               <Route path="/main" component={Main} /> 
-
               <Route path="/signup" component = {SignUpPage}/>
               <Route path="/signin" component = {SignInPage}/>
               <Route path="/mypage" component = {MyPage}/>

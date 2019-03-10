@@ -9,9 +9,9 @@ class SignUpPage extends Component {
 
   static contextType = AppContext;
 
-  constructor (props){
-    super(props);
-  }
+  // constructor (props){
+  //   super(props);
+  // }
 
   componentDidMount() {
     this.context.actions.checkAuth();

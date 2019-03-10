@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './Detail.css';
 import {createFilter} from 'react-search-input';
 import { AppContext } from '../../contexts/appContext';
-const KEYS_TO_FILTERS = ['_id'];
+const KEYS_TO_FILTERS = ['id'];
 
 // import { ButtonToolbar, Button, Row, Col, Image } from 'react-bootstrap';
 class Detail extends Component {

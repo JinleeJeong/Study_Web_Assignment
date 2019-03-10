@@ -36,11 +36,12 @@ router.get('/', (req, res, next) => {
 /* SAVE Contents formData로 들어온 데이터 저장 + imageUrl스키마 필드에 파일 경로 저장*/
 router.post('/', upload, (req, res, next) => {  
   Contents.create({...req.body, imageUrl: req.file.path}, (err, post) => {
-    //console.log(req);
+    // console.log(req);
     if (err) return next(err);
     upload(req, res, () => {
-      if(req.fileValidationError)
+      if(req.fileValidationError){
           return res.send(req.fileValidationError);
+      }
       else
           return res.send('/coverimg/' + req.file.filename);
     });
@@ -52,7 +53,7 @@ router.get('/r1', (req, res, next) => {
     if (err) return next(err);
     //console.log(res);
     res.json(contents);
-  }).sort({title : 1});
+  }).sort({createdAt : -1});
 });
 
 router.get('/r2', (req, res, next) => {
@@ -64,7 +65,7 @@ router.get('/r2', (req, res, next) => {
 });
 
 router.get('/context/:id', (req, res, next) => { 
-  Contents.find((err, contents) => {
+  Contents.findOne((err, contents) => {
     if (err) return next(err);
     //console.log(res);
     res.json(contents);
