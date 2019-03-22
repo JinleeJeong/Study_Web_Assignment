@@ -51,7 +51,7 @@ function socialLogin (service,profile,done){
         //URL필드는 request 이후 어느 페이지로 돌아갈지에 대한 정보를 나타낸다. 
         //null -> 초기 요청 페이지로 돌아간다.(ex. SignInpage에서 요청을 한 경우 SignInpage로 돌아간다.)
         newUser.save()
-          .then(user => done(null,user,{state: 'fail', message:'로그인에 성공했습니다.', url: 'http://localhost:3000'}))
+          .then(user => done(null,user,{state: 'fail', message:'로그인에 성공했습니다.', url: 'http://localhost:3000/templates'}))
           .catch(err => done(err,null,{state: 'fail', message:'회원 가입중 오류가 발생했습니다.', url: null}));   
 
       }else{
@@ -59,7 +59,7 @@ function socialLogin (service,profile,done){
         if (user.strategy == "local")  // local strategy로 가입한 경우
           done(null,null,{state: 'fail', message:'이미 가입된 아이디입니다.', url: null});
         else // 로그인 성공
-          done(null,user,{state: 'success', message:'로그인에 성공했습니다.', url: 'http://localhost:3000'});
+          done(null,user,{state: 'success', message:'로그인에 성공했습니다.', url: 'http://localhost:3000/templates'});
       }
     })
     .catch(err => done(err,null,{state: 'fail', message:'회원 조회중 오류가 발생했습니다.', url: null}));

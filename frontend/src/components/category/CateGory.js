@@ -1,10 +1,26 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import './CateGory.css';
-import {createFilter} from 'react-search-input';
 import { AppContext } from '../../contexts/appContext';
-const KEYS_TO_FILTERS = ['category'];
+import { withStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
 
-// import { ButtonToolbar, Button, Row, Col, Image } from 'react-bootstrap';
+const styles = theme => ({
+  root: {
+    flexGrow: 1,
+  },
+  paper: {
+    height: 200,
+    width: 150,
+  },
+  control: {
+    padding: theme.spacing.unit * 2,
+  },
+});
+
 class CateGory extends Component {
   static contextType = AppContext;
 
@@ -15,64 +31,44 @@ class CateGory extends Component {
       boards: [],
       searchTerm: props.match.params.id,
     }
-    // this.searchUpdated = this.searchUpdated.bind(this)
-  
+ 
   }
+
   async componentDidMount() {
-    // 진리님 코드
-    // axios.get(`http://localhost:8080/api/contents/context/`+this.state.searchTerm)
-    //   .then(res => {
-    //     this.setState({
-    //   boards : res.data,
-    //   });
-    //     console.log(this.state.boards);
-    //   });
     const { searchTerm } = this.state;
-    console.log(this.state.searchTerm);
+
     this.setState({
       boards: await this.context.actions.getContentsByCategory(searchTerm)
     });
   };
-
-  
-  // searchUpdated (term) {
-  //   if(term === ''){
-  //     this.setState({searchTerm : 'ForExample'})
-  //   }
-  //   else {
-  //     this.setState({searchTerm : term})
-  //   }
-  // }
   
     render() {
-      const filter = this.state.boards.filter(createFilter(this.state.searchTerm, KEYS_TO_FILTERS))
-      console.log(this.state.searchTerm);
+      const { classes } = this.props;
       return (
-        <section className="infoma">
-        <div>
-          <div>
-            <div className="info_search">정렬 기준 : 정확도 순</div>
-            <div className="info_cate"> 
-                  <div className = "info_category_1">
-                  {filter.map((board, index) => {
-                    return (
-                      <div className = "info_divided" key={index}>
-                            
-                            <button className="info_button"><div className ="info_named"><img src ={`http://localhost:8080/`+board.imageUrl} alt ="Testing" width ="50%" height="50%"/></div></button>
-                            <div className ="info_title">{board.title}</div>
-                            <div className ="info_description">{board.description}</div>
-                            <div className ="info_category">{board.category}</div>
-                          </div>
-                  )
-                  })} 
-
+      <Fragment>
+        <div style={{textAlign: "right", margin : "7vh 10vh 3vh 0 "}}>{this.state.searchTerm} 카테고리</div>
+        <div style={{marginLeft : "10vh", marginRight : "10vh", minHeight:"74vh"}}>
+        <Grid container spacing={40} style={{}}>
+            {this.state.boards.map((board, index) => (
+                <Grid item key={index} sm={12} md={6} lg={3} >
+                <div className="mediaQuery" >
+                    <Card className={classes.card} style={{minHeight : "32vh"}}>
+                      <div key={index}></div>
+                        <Button style={{ width: "100%", height: "20vh"}} className="" onClick={()=>{ let path = `../detail/`+board.id; this.props.history.push(path); }}><div><img src ={`http://localhost:8080/`+board.imageUrl} alt ="Testing" width ="70%" height="auto"/></div></Button>
+                        <CardContent className={classes.cardContent}>
+                          <Typography gutterBottom variant="h5" component="h2">
+                          <div>{board.title}</div>
+                          </Typography> 
+                        </CardContent>
+                      </Card>
+                      </div>
+                    </Grid>
+                  
+                  ))}
+                  </Grid>
                   </div>
-            </div>                        
-          </div>
-        </div>
-      </section>
-      );
-    }
+        </Fragment>
+      )}
 }
-
-export default CateGory;
+export default withStyles(styles)(CateGory);
+  
